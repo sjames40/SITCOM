@@ -25,15 +25,13 @@ mv {DOWNLOAD_DIR}/ffqh_10m.pt ./models/
 ```
 {DOWNLOAD_DIR} is the directory that you downloaded checkpoint to.
 
-:speaker: Checkpoint for imagenet is uploaded.
-
 <br />
 
 
 ### 2) Set environment
 ### [Option 1] Local environment setting
 
-We use the external codes for motion-blurring and non-linear deblurring.
+We use the external codes for motion-blurring and non-linear deblurring as same as the dps and daps
 
 ```
 git clone https://github.com/VinAIResearch/blur-kernel-space-exploring bkse
@@ -48,40 +46,21 @@ conda create -n new_diffusion python=3.8
 
 conda activate new_diffusion
 
-pip install -r requirements.txt
-
-pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
-```
-
-<br />
-
-### [Option 2] Build Docker image
-
-Install docker engine, GPU driver and proper cuda before running the following commands.
-
-Dockerfile already contains command to clone external codes. You don't have to clone them again.
-
---gpus=all is required to use local GPU device (Docker >= 19.03)
+pip install torch
+pip install numpy
+pip install diffuser
+pip install matplotlib
 
 ```
-docker build -t dps-docker:latest .
 
-docker run -it --rm --gpus=all dps-docker
-```
 
-<br />
-
-### 4) Inference
+### 3) Inference
 
 ```
-python3 sample_condition.py \
---model_config=configs/model_config.yaml \
---diffusion_config=configs/diffusion_config.yaml \
---task_config={TASK-CONFIG};
+you can run the python 
 ```
 
-
-:speaker: For imagenet, use configs/imagenet_model_config.yaml
+For imagenet, use configs/imagenet_model_config.yaml
 
 <br />
 
@@ -101,7 +80,7 @@ python3 sample_condition.py \
 ```
 
 ### Structure of task configurations
-You need to write your data directory at data.root. Default is ./data/samples which contains three sample images from FFHQ validation set.
+You need to write your data directory at data.root. Default is ./data/samples which contains 10 sample images from FFHQ validation set.
 
 ```
 conditioning:
@@ -118,9 +97,8 @@ measurement:
         name: # check candidates in guided_diffusion/measurements.py
 
 noise:
-    name:   # gaussian or poisson
+    name:   # gaussian
     sigma:  # if you use name: gaussian, set this.
-    (rate:) # if you use name: poisson, set this.
 ```
 
 
