@@ -115,7 +115,7 @@ noise:
 
 ## Refrences: 
 - Our implementation is based on [DPS](https://github.com/DPS2022/diffusion-posterior-sampling).
-- Baselines: [DCDP](https://github.com/Morefre/Decoupled-Data-Consistency-with-Diffusion-Purification-for-Image-Restoration), [DAPS](https://github.com/zhangbingliang2019/DAPS), and [DDNM](https://github.com/wyhuai/DDNM)
+- Baselines: [DCDP](https://github.com/Morefre/Decoupled-Data-Consistency-with-Diffusion-Purification-for-Image-Restoration), [DAPS](https://github.com/zhangbingliang2019/DAPS), and [DDNM](https://github.com/wyhuai/DDNM).
  
 
   
