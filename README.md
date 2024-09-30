@@ -67,7 +67,10 @@ pip install matplotlib
 ### 3) Inference
 
 ```
-you can run python sitcom.py
+you can run python SITCOM.py for noise level with 0.01 case
+
+for the noise case like 0.05
+you can run python SITCOM_with_noise
 ```
 
 For imagenet, use configs/imagenet_model_config.yaml
