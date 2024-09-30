@@ -20,9 +20,7 @@ Diffusion models (DMs) are a class of generative models that allow sampling from
 
 - nvidia-docker (if you use GPU in docker container)
 
-It is okay to use lower version of CUDA with proper pytorch version.
-
-Ex) CUDA 10.2 with pytorch 1.7.0
+It is okay to use lower version of CUDA with proper pytorch version. For example, CUDA 10.2 with pytorch 1.7.0.
 
 <br />
 
@@ -43,7 +41,7 @@ mv {DOWNLOAD_DIR}/ffqh_10m.pt ./models/
 ### 2) Set environment
 ### [Option 1] Local environment setting
 
-We use the external codes for motion-blurring and non-linear deblurring as same as the dps and daps
+We use the external codes for motion-blurring and non-linear deblurring, similar to DPS (see references below). 
 
 ```
 git clone https://github.com/VinAIResearch/blur-kernel-space-exploring bkse
@@ -69,7 +67,7 @@ pip install matplotlib
 ### 3) Inference
 
 ```
-you can run the python sitcom.py
+you can run python sitcom.py
 ```
 
 For imagenet, use configs/imagenet_model_config.yaml
