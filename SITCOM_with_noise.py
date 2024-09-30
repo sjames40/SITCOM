@@ -99,7 +99,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         if loss < 510*torch.sqrt(torch.tensor(len(y), dtype=torch.float32)):
             print("BREAKKKKKKKKKKKKKKKKKKKK")
             break
-        loss.backward(true)    
+        loss.backward(retain_graph=True)    
         optimizer.step()
 
       #  print(f"Step {step}/{num_steps}, Loss: {loss.item()}")
