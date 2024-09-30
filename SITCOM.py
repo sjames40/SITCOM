@@ -96,7 +96,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
         loss = torch.norm(out-y)**2
-        loss.backward()    
+        loss.backward(retain_graph=True)    
         optimizer.step()
 
       #  print(f"Step {step}/{num_steps}, Loss: {loss.item()}")
