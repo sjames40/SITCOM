@@ -69,7 +69,7 @@ pip install matplotlib
 ### 3) Inference
 
 ```
-you can run the python 
+you can run the python sitcom.py
 ```
 
 For imagenet, use configs/imagenet_model_config.yaml
@@ -95,10 +95,6 @@ For imagenet, use configs/imagenet_model_config.yaml
 You need to write your data directory at data.root. Default is ./data/samples which contains 10 sample images from FFHQ validation set.
 
 ```
-conditioning:
-    method: # check candidates in guided_diffusion/condition_methods.py
-    params:
-        scale: 0.5
 
 data:
     name: ffhq
