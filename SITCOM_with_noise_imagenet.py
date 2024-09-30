@@ -43,7 +43,7 @@ def load_yaml(file_path: str) -> dict:
         config = yaml.load(f, Loader=yaml.FullLoader)
     return config
 
-model_config='/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/model_config.yaml'
+model_config='/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/imagenet_model_config.yaml'
 diffusion_config='/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/diffusion_config.yaml'
 task_config= '/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/super_resolution_config.yaml'
 
