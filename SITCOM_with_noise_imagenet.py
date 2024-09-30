@@ -141,7 +141,7 @@ step_size = 1000//n_step
 dtype = torch.float32
 
 
-gt_img = Image.open('/home/shijun.liang/github_code/diffusion-posterior-sampling-main/00009.png').convert("RGB")
+gt_img = Image.open('/home/shijun.liang/github_code/diffusion-posterior-sampling-main/imagenet/ILSVRC2012_val_00001185.JPEG').convert("RGB")
 #shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
 ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
 x = ref_numpy * 2 - 1
