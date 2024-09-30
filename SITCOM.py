@@ -106,7 +106,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
 
 # define the sampler step
 out = []
-n_step = 10
+n_step = 20
 scheduler.set_timesteps(num_inference_steps=n_step)
 step_size = 1000//n_step
 
@@ -151,7 +151,7 @@ for i, t in enumerate(scheduler.timesteps):
         sqrt_one_minus_alpha_cumprod = beta_prod_t**0.5
 
         for k in range(1):
-            input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=20, learning_rate=0.01)
+            input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=30, learning_rate=0.01)
             input= pred_original_sample * alpha_prod_t**0.5+(1-alpha_prod_t)**0.5*torch.randn(input.size()).to(device)
         input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(device)
    
