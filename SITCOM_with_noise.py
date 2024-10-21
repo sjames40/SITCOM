@@ -95,7 +95,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0 = (input_tensor.to(device) -sqrt_one_minus_alpha_cumprod * noise_pred) / sqrt_alpha_cumprod
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
-        loss = torch.norm(out-y)**2
+        loss = torch.norm(out-y_n)**2
         if loss < 510*torch.sqrt(torch.tensor(len(y), dtype=torch.float32)):
             print("BREAKKKKKKKKKKKKKKKKKKKK")
             break
