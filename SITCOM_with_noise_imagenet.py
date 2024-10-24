@@ -45,7 +45,7 @@ def load_yaml(file_path: str) -> dict:
 
 model_config='/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/imagenet_model_config.yaml'
 diffusion_config='/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/diffusion_config.yaml'
-task_config= '/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/super_resolution_config.yaml'
+task_config= '/home/shijun.liang/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/motion_deblur_config.yaml'
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # Load configurations
