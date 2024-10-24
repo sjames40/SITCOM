@@ -158,8 +158,8 @@ for i, t in enumerate(scheduler.timesteps):
         
         print(f"Time: {t}")
 
-input = (input + 1) / 2
-inpainted_image = input.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
+out = (pred_original_sample + 1) / 2
+out_image = pred_original_sample.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
 
 
 
@@ -168,7 +168,7 @@ y = (y/2+0.5)
 
 
 
-plt.imshow(inpainted_image)
+plt.imshow(out_image)
 plt.axis('off')
 plt.savefig("ffhq0009_check2.png", dpi=300,bbox_inches='tight', pad_inches=0)
 plt.colorbar()
