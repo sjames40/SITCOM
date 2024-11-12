@@ -56,7 +56,7 @@ sampler = create_sampler(**diffusion_config)
 sample_fn = partial(sampler.p_sample_loop, model=model, measurement_cond_fn=measurement_cond_fn)
 
 # Working directory
-#out_path = os.path.join('/home/shijun.liang/github_code/diffusion-posterior-sampling-main/result')
+#out_path = os.path.join('/home/github_code/diffusion-posterior-sampling-main/result')
 
 
 # Prepare dataloader
@@ -116,7 +116,7 @@ step_size = 1000//n_step
 dtype = torch.float32
 
 
-gt_img = Image.open('/home/shijun.liang/github_code/diffusion-posterior-sampling-main/00000.png').convert("RGB")
+gt_img = Image.open('/home/github_code/diffusion-posterior-sampling-main/00000.png').convert("RGB")
 #shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
 ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
 x = ref_numpy * 2 - 1
