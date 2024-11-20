@@ -6,6 +6,8 @@ The y-axis corresponds to the PSNR value, whereas the x-axis corresponds to $i\i
 
 ### Gaussian Deblurring
 ![Alt text](GDB_PSNR_curves.png)
+![Alt text](loss_curves_GDB.png)
 
 ### High Dynamic Range
 ![Alt text](HDR_PSNR_curves.png)
+![Alt text](loss_curves_HDR.png)
