@@ -120,17 +120,25 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0 = (input_tensor.to(device) -sqrt_one_minus_alpha_cumprod * noise_pred) / sqrt_alpha_cumprod
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
-        loss = torch.norm(out-y_n)**2
-        if loss < 510*torch.sqrt(torch.tensor(len(y), dtype=torch.float32)):
-            print("BREAKKKKKKKKKKKKKKKKKKKK")
-            break
-        loss.backward(true)    
+        loss = torch.norm(out-y)**2
+        loss.backward(retain_graph=True)    
         optimizer.step()
 
       #  print(f"Step {step}/{num_steps}, Loss: {loss.item()}")
     noise = (input_tensor-sqrt_alpha_cumprod*pred_x0)/sqrt_one_minus_alpha_cumprod
-    return input_tensor.detach(), pred_x0.detach(), noise.detach()
+    with torch.no_grad():
+    output_numpy = pred_x0.detach().cpu().squeeze().numpy()
+    output_numpy = (output_numpy/2+0.5)#.clamp(0, 1)
+    output_numpy = np.transpose(output_numpy, (1, 2, 0))
+    # calculate psnr
+    ref_numpy = (ref_img/2+0.5)
+    ref_numpy = np.array(ref_numpy.cpu().detach().numpy()[0].transpose(1,2,0))
+    tmp_psnr = compute_psnr(ref_numpy, output_numpy)
+    psnrs.append(tmp_psnr)
 
+    if len(psnrs) == 1 or (len(psnrs) > 1 and tmp_psnr > np.max(psnrs[:-1])):
+        best_img[0] = output_numpy
+    return input_tensor.detach(), pred_x0.detach(), noise.detach()
 
 # define the sampler step
 out = []
@@ -169,6 +177,9 @@ y_n.requires_grad = False
 input =torch.randn((1, 3, 256, 256), device=device, dtype=dtype)
 noise = torch.randn(input.shape)*((1-scheduler.alphas_cumprod[-1])**0.5)
 input = torch.tensor(input)*((scheduler.alphas_cumprod[-1])**0.5) + noise.to(device)
+psnrs = []
+best_img = []
+best_img.append(None)
 for i, t in enumerate(scheduler.timesteps):
         prev_timestep = t - step_size
 
@@ -185,7 +196,8 @@ for i, t in enumerate(scheduler.timesteps):
    
         
         print(f"Time: {t}")
-
+psnr_value =np.max(psnrs)
+print(f"After diffusion PSNR: {psnr_value} dB")
 out = (pred_original_sample + 1) / 2
 out_image = pred_original_sample.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
 
