@@ -18,45 +18,51 @@ from ddim_sampler import *
 import shutil
 import lpips
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--model_config', type=str)
+parser.add_argument('--diffusion_config', type=str)
+parser.add_argument('--task_config', type=str)
+parser.add_argument('--gpu', type=int, default=0)
+parser.add_argument('--file_path', type=str)
+parser.add_argument('--save_path', type=str)
+parser.add_argument('--device', type=str, default='cpu')
+parser.add_argument('--learning_rate', type=int, default=0.02)
+parser.add_argument('--num_steps', type=float, default=30)
+parser.add_argument('--n_step', type=float, default=20)
+parser.add_argument('--random_seed', type=int, default=123)
+
+args = parser.parse_args()
 
 def load_yaml(file_path: str) -> dict:
     with open(file_path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
     return config
 
-model_config='/home/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/model_config.yaml'
-diffusion_config='/home/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/diffusion_config.yaml'
-task_config= '/home/diffusion_github_code/Measurment_Consistent_Diffusion_Trajectory/configs/super_resolution_config.yaml'
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # Load configurations
-model_config = load_yaml(model_config)
-diffusion_config = load_yaml(diffusion_config)
-task_config = load_yaml(task_config)
+model_config = load_yaml(args.model_config)
+diffusion_config = load_yaml(args.diffusion_config)
+task_config = load_yaml(args.task_config)
 
 #Load model
 model = create_model(**model_config)
-model = model.to(device)
+model = model.to(args.device)
 model.eval()
 
 # Prepare Operator and noise
 measure_config = task_config['measurement']
-operator = get_operator(device=device, **measure_config['operator'])
+operator = get_operator(device=args.device, **measure_config['operator'])
 noiser = get_noise(**measure_config['noise'])
-#logger.info(f"Operation: {measure_config['operator']['name']} / Noise: {measure_config['noise']['name']}")
+
 
 # Prepare conditioning method
 cond_config = task_config['conditioning']
 cond_method = get_conditioning_method(cond_config['method'], operator, noiser, **cond_config['params'])
 measurement_cond_fn = cond_method.conditioning
-#logger.info(f"Conditioning method : {task_config['conditioning']['method']}")
+
 
 # Load diffusion sampler
 sampler = create_sampler(**diffusion_config) 
 sample_fn = partial(sampler.p_sample_loop, model=model, measurement_cond_fn=measurement_cond_fn)
-
-# Working directory
-out_path = os.path.join('/home/github_code/diffusion-posterior-sampling-main/result')
 
 
 # Prepare dataloader
@@ -82,57 +88,54 @@ def mask_A(image,mask):
    return (image*mask).to(device)
 
 # our sampler method
-def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, num_steps=100, learning_rate=0.01):
+def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, num_steps, learning_rate):
     input_tensor = torch.randn(1, model.in_channels, 256, 256, requires_grad=True)
-    input_tensor.data = input.clone().to(device)
-    optimizer = torch.optim.Adam([input_tensor], lr=.01)
-    tt = (torch.ones(1) * t).to(device)
+    input_tensor.data = input.clone().to(args.device)
+    optimizer = torch.optim.Adam([input_tensor], lr=learning_rate)
+    tt = (torch.ones(1) * t).to(args.device)
     for step in range(num_steps):
         optimizer.zero_grad()
        
-        noise_pred = model(input_tensor.to(device), tt)
+        noise_pred = model(input_tensor.to(args.device), tt)
         noise_pred = noise_pred[:, :3]
-        pred_x0 = (input_tensor.to(device) -sqrt_one_minus_alpha_cumprod * noise_pred) / sqrt_alpha_cumprod
+        pred_x0 = (input_tensor.to(args.device) -sqrt_one_minus_alpha_cumprod * noise_pred) / sqrt_alpha_cumprod
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
         loss = torch.norm(out-y)**2
         loss.backward(retain_graph=True)    
         optimizer.step()
-
-      #  print(f"Step {step}/{num_steps}, Loss: {loss.item()}")
-    noise = (input_tensor-sqrt_alpha_cumprod*pred_x0)/sqrt_one_minus_alpha_cumprod
     with torch.no_grad():
-    output_numpy = pred_x0.detach().cpu().squeeze().numpy()
-    output_numpy = (output_numpy/2+0.5)#.clamp(0, 1)
-    output_numpy = np.transpose(output_numpy, (1, 2, 0))
-    # calculate psnr
-    ref_numpy = (ref_img/2+0.5)
-    ref_numpy = np.array(ref_numpy.cpu().detach().numpy()[0].transpose(1,2,0))
-    tmp_psnr = compute_psnr(ref_numpy, output_numpy)
-    psnrs.append(tmp_psnr)
+        output_numpy = pred_x0.detach().cpu().squeeze().numpy()
+        output_numpy = (output_numpy/2+0.5)#.clamp(0, 1)
+        output_numpy = np.transpose(output_numpy, (1, 2, 0))
+        # calculate psnr
+        ref_numpy = (ref_img/2+0.5)
+        ref_numpy = np.array(ref_numpy.cpu().detach().numpy()[0].transpose(1,2,0))
+        tmp_psnr = compute_psnr(ref_numpy, output_numpy)
+        psnrs.append(tmp_psnr)
 
     if len(psnrs) == 1 or (len(psnrs) > 1 and tmp_psnr > np.max(psnrs[:-1])):
         best_img[0] = output_numpy
-    return input_tensor.detach(), pred_x0.detach(), noise.detach()
+    return input_tensor.detach(), pred_x0.detach()
 
 
 # define the sampler step
 out = []
-n_step = 20
+n_step = args.n_step
 scheduler.set_timesteps(num_inference_steps=n_step)
 step_size = 1000//n_step
 
 dtype = torch.float32
 
 
-gt_img = Image.open('/home/github_code/diffusion-posterior-sampling-main/00009.png').convert("RGB")
+gt_img = Image.open('/home/github_code/ffhq/00000.png').convert("RGB")
 #shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
 ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
 x = ref_numpy * 2 - 1
 x = x.transpose(2, 0, 1)
-ref_img = torch.Tensor(x).to(dtype).to(device).unsqueeze(0)
+ref_img = torch.Tensor(x).to(dtype).to(args.device).unsqueeze(0)
 #ref_img.requires_grad = False
-ref_img = ref_img.to(device)
+ref_img = ref_img.to(args.device)
 if measure_config['operator'] ['name'] == 'inpainting':
     mask = mask
     measurement_cond_fn = partial(cond_method.conditioning, mask=mask)
@@ -148,14 +151,13 @@ else:
     y_n = noiser(y)
 y_n.requires_grad = False
 
-
-# start reverse sampling with pretrain diffusion model
-input =torch.randn((1, 3, 256, 256), device=device, dtype=dtype)
-noise = torch.randn(input.shape)*((1-scheduler.alphas_cumprod[-1])**0.5)
-input = torch.tensor(input)*((scheduler.alphas_cumprod[-1])**0.5) + noise.to(device)
 psnrs = []
 best_img = []
 best_img.append(None)
+# start reverse sampling with pretrain diffusion model
+input =torch.randn((1, 3, 256, 256), device=args.device, dtype=dtype)
+noise = torch.randn(input.shape)*((1-scheduler.alphas_cumprod[-1])**0.5)
+input = torch.tensor(input)*((scheduler.alphas_cumprod[-1])**0.5) + noise.to(args.device)
 for i, t in enumerate(scheduler.timesteps):
         prev_timestep = t - step_size
 
@@ -166,27 +168,15 @@ for i, t in enumerate(scheduler.timesteps):
         sqrt_one_minus_alpha_cumprod = beta_prod_t**0.5
 
         for k in range(1):
-            input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=30, learning_rate=0.01)
-            input= pred_original_sample * alpha_prod_t**0.5+(1-alpha_prod_t)**0.5*torch.randn(input.size()).to(device)
-        input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(device)
+            input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=args.num_steps, learning_rate=args.learning_rate)
+            input= pred_original_sample * alpha_prod_t**0.5+(1-alpha_prod_t)**0.5*torch.randn(input.size()).to(args.device)
+        input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(args.device)
    
         
         print(f"Time: {t}")
 psnr_value =np.max(psnrs)
 print(f"After diffusion PSNR: {psnr_value} dB")
 out = (pred_original_sample + 1) / 2
-out_image = pred_original_sample.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
-
-
-
-
-y = (y/2+0.5)
-
-
-
-plt.imshow(out_image)
-plt.axis('off')
-plt.savefig("ffhq0009_check2.png", dpi=300,bbox_inches='tight', pad_inches=0)
-plt.colorbar()
+out_image = out.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
 
 

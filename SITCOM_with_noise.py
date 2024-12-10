@@ -101,7 +101,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0 = (input_tensor.to(args.device) -sqrt_one_minus_alpha_cumprod * noise_pred) / sqrt_alpha_cumprod
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
-        loss = torch.norm(out-y)**2
+        loss = torch.norm(out-y_n)**2
         loss.backward(retain_graph=True)    
         optimizer.step()
     with torch.no_grad():
@@ -121,14 +121,14 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
 
 # define the sampler step
 out = []
-n_step = 20
+n_step = args.n_step
 scheduler.set_timesteps(num_inference_steps=n_step)
 step_size = 1000//n_step
 
 dtype = torch.float32
 
 
-gt_img = Image.open('/home/github_code/diffusion-posterior-sampling-main/00000.png').convert("RGB")
+gt_img = Image.open('/home/github_code/ffhq/00000.png').convert("RGB")
 #shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
 ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
 x = ref_numpy * 2 - 1
