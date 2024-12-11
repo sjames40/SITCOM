@@ -71,6 +71,20 @@ you can run python SITCOM.py for noise level with 0.01 case
 
 for the noise case like 0.05
 you can run python SITCOM_with_noise
+with the script
+python3 SITCOM.py\
+    --model_config=configs/model_config.yaml \
+    --diffusion_config=configs/diffusion_config.yaml \
+    --task_config=configs/task_config.yaml \
+    --gpu=0 \
+    --file_path=/path/to/input_file \
+    --save_path=/path/to/output_dir \
+    --device=cuda \
+    --learning_rate=0.01 \
+    --num_steps=50 \
+    --n_step=25 \
+    --random_seed=42
+
 ```
 
 For imagenet, use configs/imagenet_model_config.yaml
