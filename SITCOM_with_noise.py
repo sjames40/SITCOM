@@ -26,9 +26,10 @@ parser.add_argument('--gpu', type=int, default=0)
 parser.add_argument('--file_path', type=str)
 parser.add_argument('--save_path', type=str)
 parser.add_argument('--device', type=str, default='cpu')
-parser.add_argument('--learning_rate', type=int, default=0.02)
+parser.add_argument('--learning_rate', type=float, default=0.02)
 parser.add_argument('--num_steps', type=float, default=30)
 parser.add_argument('--n_step', type=float, default=20)
+parser.add_argument('--threshold', type=float, default=30)
 parser.add_argument('--random_seed', type=int, default=123)
 
 args = parser.parse_args()
@@ -102,6 +103,8 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
         loss = torch.norm(out-y_n)**2
+        if loss < arg.threshold*torch.sqrt(torch.tensor(len(y), dtype=torch.float32)):
+           break   
         loss.backward(retain_graph=True)    
         optimizer.step()
     with torch.no_grad():
@@ -153,11 +156,13 @@ y_n.requires_grad = False
 
 psnrs = []
 best_img = []
+times =[]
 best_img.append(None)
 # start reverse sampling with pretrain diffusion model
 input =torch.randn((1, 3, 256, 256), device=args.device, dtype=dtype)
 noise = torch.randn(input.shape)*((1-scheduler.alphas_cumprod[-1])**0.5)
 input = torch.tensor(input)*((scheduler.alphas_cumprod[-1])**0.5) + noise.to(args.device)
+start_time = time.time() 
 for i, t in enumerate(scheduler.timesteps):
         prev_timestep = t - step_size
 
@@ -173,7 +178,11 @@ for i, t in enumerate(scheduler.timesteps):
         input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(args.device)
    
         
-        print(f"Time: {t}")
+end_time = time.time()  # End timer
+elapsed_time = end_time - start_time  # Calculate elapsed time
+times.append(elapsed_time)  # Store the time
+print(f"Processing time for image {i + 1}: {elapsed_time:.2f} seconds")
+
 psnr_value =np.max(psnrs)
 print(f"After diffusion PSNR: {psnr_value} dB")
 out = (pred_original_sample + 1) / 2
