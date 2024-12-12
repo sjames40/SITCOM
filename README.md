@@ -23,6 +23,9 @@ Diffusion models (DMs) are a class of generative models that allow sampling from
 It is okay to use lower version of CUDA with proper pytorch version. For example, CUDA 10.2 with pytorch 1.7.0.
 
 <br />
+### For phase retrieval case we will refer to the updated method on [link](https://github.com/sjames40/SITCOM_phase-retrieval/tree/main)
+
+
 
 ## Getting started 
 
@@ -83,9 +86,12 @@ python3 SITCOM.py\
     --learning_rate=0.01 \
     --num_steps=50 \
     --n_step=25 \
+    --threshold = 560 \
     --random_seed=42
 
 ```
+The threshold may vary depending on the task; for instance, in super-resolution, it is set to 28, whereas for phase retrieval, it is 1020, as it depends on the image size.
+
 
 For imagenet, use configs/imagenet_model_config.yaml
 
