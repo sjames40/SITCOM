@@ -17,7 +17,7 @@ from common_utils import *
 from ddim_sampler import *
 import shutil
 import lpips
-
+import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_config', type=str)
 parser.add_argument('--diffusion_config', type=str)
