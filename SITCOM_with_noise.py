@@ -131,61 +131,65 @@ step_size = 1000//n_step
 dtype = torch.float32
 
 
-gt_img = Image.open('/home/github_code/ffhq/00000.png').convert("RGB")
-#shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
-ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
-x = ref_numpy * 2 - 1
-x = x.transpose(2, 0, 1)
-ref_img = torch.Tensor(x).to(dtype).to(args.device).unsqueeze(0)
-#ref_img.requires_grad = False
-ref_img = ref_img.to(args.device)
-if measure_config['operator'] ['name'] == 'inpainting':
-    mask = mask
-    measurement_cond_fn = partial(cond_method.conditioning, mask=mask)
-    sample_fn = partial(sample_fn, measurement_cond_fn=measurement_cond_fn)
-
-    # Forward measurement model (Ax + n)
-    y = operator.forward(ref_img, mask=mask)
-    y_n = noiser(y)
-
-else: 
-    # Forward measurement model (Ax + n)
-    y = operator.forward(ref_img)
-    y_n = noiser(y)
-y_n.requires_grad = False
-
+# gt_img = Image.open('/home/github_code/ffhq/00000.png').convert("RGB")
+# #shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
+# ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
+# x = ref_numpy * 2 - 1
+# x = x.transpose(2, 0, 1)
+# ref_img = torch.Tensor(x).to(dtype).to(args.device).unsqueeze(0)
+# #ref_img.requires_grad = False
+# ref_img = ref_img.to(args.device)
 psnrs = []
-best_img = []
 times =[]
-best_img.append(None)
-# start reverse sampling with pretrain diffusion model
-input =torch.randn((1, 3, 256, 256), device=args.device, dtype=dtype)
-noise = torch.randn(input.shape)*((1-scheduler.alphas_cumprod[-1])**0.5)
-input = torch.tensor(input)*((scheduler.alphas_cumprod[-1])**0.5) + noise.to(args.device)
-start_time = time.time() 
-for i, t in enumerate(scheduler.timesteps):
-        prev_timestep = t - step_size
+for i, ref_img in enumerate(loader):
+    best_img = []
+    best_img.append(None)
+    if measure_config['operator'] ['name'] == 'inpainting':
+        mask = mask
+        measurement_cond_fn = partial(cond_method.conditioning, mask=mask)
+        sample_fn = partial(sample_fn, measurement_cond_fn=measurement_cond_fn)
 
-        alpha_prod_t = scheduler.alphas_cumprod[t]
-        alpha_prod_t_prev = scheduler.alphas_cumprod[prev_timestep] if prev_timestep >= 0 else scheduler.alphas_cumprod[0]
+        # Forward measurement model (Ax + n)
+        y = operator.forward(ref_img, mask=mask)
+        y_n = noiser(y)
 
-        beta_prod_t = 1 - alpha_prod_t
-        sqrt_one_minus_alpha_cumprod = beta_prod_t**0.5
+    else: 
+        # Forward measurement model (Ax + n)
+        y = operator.forward(ref_img)
+        y_n = noiser(y)
+    y_n.requires_grad = False
 
-        for k in range(1):
-            input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=args.num_steps, learning_rate=args.learning_rate)
-            input= pred_original_sample * alpha_prod_t**0.5+(1-alpha_prod_t)**0.5*torch.randn(input.size()).to(args.device)
-        input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(args.device)
-   
-        
-end_time = time.time()  # End timer
-elapsed_time = end_time - start_time  # Calculate elapsed time
-times.append(elapsed_time)  # Store the time
-print(f"Processing time for image {i + 1}: {elapsed_time:.2f} seconds")
 
-psnr_value =np.max(psnrs)
-print(f"After diffusion PSNR: {psnr_value} dB")
-out = (pred_original_sample + 1) / 2
+    # start reverse sampling with pretrain diffusion model
+    input =torch.randn((1, 3, 256, 256), device=args.device, dtype=dtype)
+    noise = torch.randn(input.shape)*((1-scheduler.alphas_cumprod[-1])**0.5)
+    input = torch.tensor(input)*((scheduler.alphas_cumprod[-1])**0.5) + noise.to(args.device)
+    start_time = time.time() 
+    for i, t in enumerate(scheduler.timesteps):
+            prev_timestep = t - step_size
+
+            alpha_prod_t = scheduler.alphas_cumprod[t]
+            alpha_prod_t_prev = scheduler.alphas_cumprod[prev_timestep] if prev_timestep >= 0 else scheduler.alphas_cumprod[0]
+
+            beta_prod_t = 1 - alpha_prod_t
+            sqrt_one_minus_alpha_cumprod = beta_prod_t**0.5
+
+            for k in range(1):
+                input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=args.num_steps, learning_rate=args.learning_rate)
+                input= pred_original_sample * alpha_prod_t**0.5+(1-alpha_prod_t)**0.5*torch.randn(input.size()).to(args.device)
+            input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(args.device)
+    
+            
+    end_time = time.time()  # End timer
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+    times.append(elapsed_time)  # Store the time
+    print(f"Processing time for image {i + 1}: {elapsed_time:.2f} seconds")
+
+    psnr_value =np.max(psnrs)
+    print(f"After diffusion PSNR: {psnr_value} dB")
+    out = (pred_original_sample + 1) / 2
+    out_image = out.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
+
 out_image = out.squeeze(0).permute(1, 2, 0).detach().cpu().numpy()
 
 
