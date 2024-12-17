@@ -18,7 +18,6 @@ from ddim_sampler import *
 import shutil
 import lpips
 import time
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_config', type=str)
 parser.add_argument('--diffusion_config', type=str)
@@ -28,11 +27,20 @@ parser.add_argument('--file_path', type=str)
 parser.add_argument('--save_path', type=str)
 parser.add_argument('--device', type=str, default='cpu')
 parser.add_argument('--learning_rate', type=float, default=0.02)
-parser.add_argument('--num_steps', type=float, default=30)
-parser.add_argument('--n_step', type=float, default=20)
+parser.add_argument('--num_steps', type=int, default=30)
+parser.add_argument('--n_step', type=int, default=20)
+parser.add_argument('--threshold', type=int, default=30)
 parser.add_argument('--random_seed', type=int, default=123)
 
 args = parser.parse_args()
+
+def compute_psnr(img1, img2):
+    mse = np.mean((img1 - img2) ** 2)
+    if mse == 0:
+        return float('inf')
+    max_pixel = 1.0  # Assuming the image is normalized to [0, 1]
+    psnr = 20 * np.log10(max_pixel / (mse**0.5))
+    return psnr.item()
 
 def load_yaml(file_path: str) -> dict:
     with open(file_path) as f:
@@ -81,15 +89,14 @@ if measure_config['operator']['name'] == 'inpainting':
 # Or define mask
 mask = torch.ones(1,3,256,256)
 mask[:,:,70:200,70:190]=0  
-mask = mask.to(device)
+mask = mask.to(args.device)
 scheduler = DDIMScheduler()
 
 
 def mask_A(image,mask):
-   return (image*mask).to(device)
+    return (image*mask).to(device)
 
 # our sampler method
-
 def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, num_steps, learning_rate):
     input_tensor = torch.randn(1, model.in_channels, 256, 256, requires_grad=True)
     input_tensor.data = input.clone().to(args.device)
@@ -103,7 +110,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0 = (input_tensor.to(args.device) -sqrt_one_minus_alpha_cumprod * noise_pred) / sqrt_alpha_cumprod
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
-        loss = torch.norm(out-y)**2
+        loss = torch.norm(out-y)**2 
         loss.backward(retain_graph=True)    
         optimizer.step()
     with torch.no_grad():
@@ -130,19 +137,12 @@ step_size = 1000//n_step
 dtype = torch.float32
 
 
-# gt_img = Image.open('/home/github_code/ffhq/00000.png').convert("RGB")
-# #shutil.copy(gt_img_path, os.path.join(logdir, 'gt.png'))
-# ref_numpy = np.array(gt_img).astype(np.float32) / 255.0
-# x = ref_numpy * 2 - 1
-# x = x.transpose(2, 0, 1)
-# ref_img = torch.Tensor(x).to(dtype).to(args.device).unsqueeze(0)
-# #ref_img.requires_grad = False
-# ref_img = ref_img.to(args.device)
 psnrs = []
 times =[]
 for i, ref_img in enumerate(loader):
     best_img = []
     best_img.append(None)
+    ref_img = ref_img.to(dtype).to(args.device)
     if measure_config['operator'] ['name'] == 'inpainting':
         mask = mask
         measurement_cond_fn = partial(cond_method.conditioning, mask=mask)
@@ -166,7 +166,7 @@ for i, ref_img in enumerate(loader):
     start_time = time.time() 
     for i, t in enumerate(scheduler.timesteps):
             prev_timestep = t - step_size
-
+            #print(prev_timestep.dtype)
             alpha_prod_t = scheduler.alphas_cumprod[t]
             alpha_prod_t_prev = scheduler.alphas_cumprod[prev_timestep] if prev_timestep >= 0 else scheduler.alphas_cumprod[0]
 
@@ -174,7 +174,7 @@ for i, ref_img in enumerate(loader):
             sqrt_one_minus_alpha_cumprod = beta_prod_t**0.5
 
             for k in range(1):
-                input, pred_original_sample, noise_pred= optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=args.num_steps, learning_rate=args.learning_rate)
+                input, pred_original_sample = optimize_input(input.clone(), sqrt_one_minus_alpha_cumprod, alpha_prod_t**0.5, t, num_steps=args.num_steps, learning_rate=args.learning_rate)
                 input= pred_original_sample * alpha_prod_t**0.5+(1-alpha_prod_t)**0.5*torch.randn(input.size()).to(args.device)
             input = pred_original_sample * alpha_prod_t_prev**0.5+(1-alpha_prod_t_prev)**0.5*torch.randn(input.size()).to(args.device)
     
