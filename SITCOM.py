@@ -76,8 +76,9 @@ sample_fn = partial(sampler.p_sample_loop, model=model, measurement_cond_fn=meas
 
 # Prepare dataloader
 data_config = task_config['data']
-transform = transforms.Compose([transforms.ToTensor(),
-                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+# transform = transforms.Compose([transforms.ToTensor(),
+#                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+transform = transforms.Compose([transforms.ToTensor()])
 dataset = get_dataset(**data_config, transforms=transform)
 loader = get_dataloader(dataset, batch_size=1, num_workers=0, train=False)
 
@@ -144,6 +145,7 @@ for i, ref_img in enumerate(loader):
     best_img = []
     best_img.append(None)
     ref_img = ref_img.to(dtype).to(args.device)
+    ref_img = ref_img * 2 - 1
     if measure_config['operator'] ['name'] == 'inpainting':
         mask = mask
         measurement_cond_fn = partial(cond_method.conditioning, mask=mask)
