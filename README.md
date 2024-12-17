@@ -75,7 +75,7 @@ you can run python SITCOM.py for noise level with 0.01 case
 for the noise case like 0.05
 you can run python SITCOM_with_noise
 with the script
-python3 SITCOM.py\
+python3 SITCOM_with_noise.py\
     --model_config=configs/model_config.yaml \
     --diffusion_config=configs/diffusion_config.yaml \
     --task_config=configs/task_config.yaml \
@@ -86,8 +86,9 @@ python3 SITCOM.py\
     --learning_rate=0.01 \
     --num_steps=50 \
     --n_step=25 \
-    --threshold = 560 \
+    --threshold= 560 \
     --random_seed=42
+
 
 ```
 The threshold may vary depending on the task; for instance, in super-resolution, it is set to 28, whereas for phase retrieval, it is 1020, as it depends on the image size.
