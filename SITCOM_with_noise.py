@@ -139,9 +139,10 @@ step_size = 1000//n_step
 dtype = torch.float32
 
 
-psnrs = []
+
 times =[]
 for i, ref_img in enumerate(loader):
+    psnrs = []
     best_img = []
     best_img.append(None)
     ref_img = ref_img.to(dtype).to(args.device)
