@@ -87,7 +87,7 @@ python3 SITCOM_with_noise.py\
     --learning_rate=0.02 \
     --num_steps=30 \
     --n_step=20 \
-    --threshold=28 \
+    --noiselevel=0.05 \
     --random_seed=42
 
 
