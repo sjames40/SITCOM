@@ -15,4 +15,4 @@ measurement:
   
   noise: 
     name: gaussian
-    sigma: 0.04
+    sigma: 0.05
