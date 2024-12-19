@@ -29,7 +29,7 @@ parser.add_argument('--device', type=str, default='cpu')
 parser.add_argument('--learning_rate', type=float, default=0.02)
 parser.add_argument('--num_steps', type=int, default=30)
 parser.add_argument('--n_step', type=int, default=20)
-parser.add_argument('--threshold', type=int, default=30)
+parser.add_argument('--noiselevel', type=float, default=0.05)
 parser.add_argument('--random_seed', type=int, default=123)
 
 args = parser.parse_args()
@@ -112,7 +112,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         pred_x0= torch.clamp(pred_x0, -1, 1)
         out =operator.forward(pred_x0)
         loss = torch.norm(out-y_n)**2
-        if loss < args.threshold*torch.sqrt(torch.tensor(len(y), dtype=torch.float32)):
+        if loss < (args.noiselevel + 0.001)**2 * torch.tensor(len(y), dtype=torch.float32):
             break   
         loss.backward(retain_graph=True)    
         optimizer.step()
