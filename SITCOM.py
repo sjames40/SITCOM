@@ -159,7 +159,7 @@ for i, ref_img in enumerate(loader):
         # Forward measurement model (Ax + n)
         y = operator.forward(ref_img)
         y_n = noiser(y)
-    y_n.requires_grad = False
+
 
 
     # start reverse sampling with pretrain diffusion model
