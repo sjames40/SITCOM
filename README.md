@@ -93,7 +93,7 @@ python3 SITCOM_with_noise.py\
 
 
 ```
-The threshold may vary depending on the task; for instance, in super-resolution, it is set to 28, whereas for phase retrieval, it is 80, other image task is 50. as it depends on the image size.
+The threshold may vary depending on the task; for instance, in super-resolution, it is set to 20, whereas for phase retrieval, it is 80, other image task is 50. as it depends on the image size.
 
 
 For imagenet, use configs/imagenet_model_config.yaml
