@@ -70,7 +70,7 @@ pip install matplotlib
 ### 3) Inference
 
 ```
-you can run python SITCOM.py for noise level with 0.01 case
+you can run python SITCOM.py for measurement noiseless case
 
 for the noise case like 0.05
 you can run python SITCOM_with_noise
