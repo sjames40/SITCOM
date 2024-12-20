@@ -139,7 +139,7 @@ def optimize_input(input,  sqrt_one_minus_alpha_cumprod, sqrt_alpha_cumprod, t, 
         out =operator.forward(pred_x0)
         loss = torch.norm(out-y_n)**2
         height, width = y.shape[-2], y.shape[-1]
-        product = height * width
+        product = height * width *3
         if loss < (args.noiselevel + 0.001)**2 * torch.tensor(product, dtype=torch.float32):
             break   
         loss.backward(retain_graph=True)    
