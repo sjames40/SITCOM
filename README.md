@@ -24,7 +24,7 @@ It is okay to use lower version of CUDA with proper pytorch version. For example
 
 <br />
 ### For phase retrieval with ode solver 
-we will refer to the other director on [link]((https://github.com/sjames40/SITCOM_ODE))
+we will refer to the other director on [SITCOM-ODE](https://github.com/sjames40/SITCOM_ODE).
 
 
 
