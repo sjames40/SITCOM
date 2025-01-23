@@ -23,7 +23,8 @@ Diffusion models (DMs) are a class of generative models that allow sampling from
 It is okay to use lower version of CUDA with proper pytorch version. For example, CUDA 10.2 with pytorch 1.7.0.
 
 <br />
-### For phase retrieval with ode solver we will refer to the other director on [link]((https://github.com/sjames40/SITCOM_ODE))
+### For phase retrieval with ode solver 
+we will refer to the other director on [link]((https://github.com/sjames40/SITCOM_ODE))
 
 
 
