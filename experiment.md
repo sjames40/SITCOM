@@ -1,6 +1,6 @@
 We provide the following experiment result to support our theoretical argument, where we show that a measurement-consistent image that is obtained without explicitly enforcing backward consistency can not be represented as the output of $f(v_t;t,\epsilon_\theta)$ with some $v_t$. This is done by examining whether the following loss can go to zero or not.
 
-$\min_z L(z) := \|\hat{x}_0'(x_t) - f(z; t, \epsilon_\theta)\|^2_2$
+$\min_z L(z) := \|\hat{x}'(x_t) - f(z; t, \epsilon_\theta)\|^2_2$
  
 
 with $z$ initialized as $x_t$.
