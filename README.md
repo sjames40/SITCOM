@@ -146,7 +146,7 @@ noise:
 ```bibtex
 @inproceedings{sitcomICML25,
 author    = {Alkhouri, Ismail and Linag, Shijun and Huang, Cheng-Han, and Dai, Jimmy, and Qu, Qing and Ravishankar, Saiprasad, and Wang, Rongrong},
-  title     = {Image Reconstruction Via Autoencoding Sequential Deep Image Prior},
+  title     = {SITCOM: Step-wise Triple-Consistent Diffusion Sampling For Inverse Problems},
   booktitle   = {International Conference on Machine Learning (ICML)},
   year      = {2025}
 }
