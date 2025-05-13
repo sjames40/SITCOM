@@ -142,5 +142,12 @@ noise:
 - Our implementation is based on [DPS](https://github.com/DPS2022/diffusion-posterior-sampling).
 - Baselines: [DCDP](https://github.com/Morefre/Decoupled-Data-Consistency-with-Diffusion-Purification-for-Image-Restoration), [DAPS](https://github.com/zhangbingliang2019/DAPS), and [DDNM](https://github.com/wyhuai/DDNM).
  
-
+### To cite our paper, use the following: 
+```bibtex
+@inproceedings{sitcomICML25,
+author    = {Alkhouri, Ismail and Linag, Shijun and Huang, Cheng-Han, and Dai, Jimmy, and Qu, Qing and Ravishankar, Saiprasad, and Wang, Rongrong},
+  title     = {Image Reconstruction Via Autoencoding Sequential Deep Image Prior},
+  booktitle   = {International Conference on Machine Learning (ICML)},
+  year      = {2025}
+}
   
