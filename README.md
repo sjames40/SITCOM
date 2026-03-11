@@ -131,7 +131,6 @@ For imagenet, use configs/imagenet_model_config.yaml
 You need to write your data directory at data.root. Default is ./data/samples which contains 10 sample images from FFHQ validation set.
 
 ```
-
 data:
     name: ffhq
     root: ./data/samples/
