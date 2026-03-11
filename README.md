@@ -42,8 +42,9 @@ mv {DOWNLOAD_DIR}/ffqh_10m.pt ./models/
 ```
 **{DOWNLOAD_DIR} is the directory that you downloaded checkpoint to.**
 
+
 ### 2) Set environment
-### [Option 1] Local environment setting
+## [Option 1] Local environment setting
 
 We use the external codes for motion-blurring and non-linear deblurring, similar to DPS (see references below). 
 
@@ -92,10 +93,7 @@ python3 SITCOM_with_noise.py\
     --random_seed=42
 
 ```
-The threshold may vary depending on the task; for instance, in super-resolution, it is set to 20, whereas for phase retrieval, it is 80, other image task is 50. as it depends on the image size.
-
-
-For imagenet, use configs/imagenet_model_config.yaml
+The threshold may vary depending on the task; for instance, in super-resolution, it is set to 20, whereas for phase retrieval, it is 80, other image task is 50. as it depends on the image size. For imagenet, use configs/imagenet_model_config.yaml.
 
 
 ### 4) Preparation for ldct_sitcom.ipynb
