@@ -104,7 +104,6 @@ The threshold may vary depending on the task; for instance, in super-resolution,
 For imagenet, use configs/imagenet_model_config.yaml
 
 <br />
-
 ### 4) Preparation for ldct_sitcom.ipynb
 
 - **Data Directory:**
