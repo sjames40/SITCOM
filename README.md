@@ -34,15 +34,13 @@ we will refer to the other director on [SITCOM-ODE](https://github.com/sjames40/
 
 ## Getting started 
 
-
 ### 1) Download pretrained checkpoint
 From the [link](https://drive.google.com/drive/folders/1jElnRoFv7b31fG0v6pTSQkelbSX3xGZh?usp=sharing), download the checkpoint "ffhq_10m.pt" and paste it to ./models/
 ```
 mkdir models
 mv {DOWNLOAD_DIR}/ffqh_10m.pt ./models/
 ```
-{DOWNLOAD_DIR} is the directory that you downloaded checkpoint to.
-
+**{DOWNLOAD_DIR} is the directory that you downloaded checkpoint to.**
 
 ### 2) Set environment
 ### [Option 1] Local environment setting
@@ -92,8 +90,6 @@ python3 SITCOM_with_noise.py\
     --n_step=20 \
     --noiselevel=0.05 \
     --random_seed=42
-
-
 
 ```
 The threshold may vary depending on the task; for instance, in super-resolution, it is set to 20, whereas for phase retrieval, it is 80, other image task is 50. as it depends on the image size.
