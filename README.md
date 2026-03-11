@@ -157,4 +157,13 @@ author    = {Alkhouri, Ismail and Linag, Shijun and Huang, Cheng-Han, and Dai, J
   booktitle   = {International Conference on Machine Learning (ICML)},
   year      = {2025}
 }
+```
+
+## 📬 Correspondence
+
+For questions regarding the paper or code, please contact:
+
+* **Shijun Liang**: `liangs16@msu.edu`
+* **Haijie Yuan**: `yuanhai1@msu.edu`
+* **Prof. Saiprasad Ravishankar**: `ravisha3@msu.edu`
   
