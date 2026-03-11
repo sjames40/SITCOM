@@ -105,6 +105,14 @@ For imagenet, use configs/imagenet_model_config.yaml
 
 <br />
 
+### 4) Preparation for ldct_sitcom.ipynb
+
+- **Data Directory:**
+  - `SITCOM/data/ldct_demo/ndct` (Required, place clean/full-dose here)
+  - `SITCOM/data/ldct_demo/ldct` (Optional, place paired low-dose here)
+- **Model Weights:**
+  - `SITCOM/models/ffhq_10m.pt`
+
 ## Possible task configurations
 
 ```
