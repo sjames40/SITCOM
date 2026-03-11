@@ -43,8 +43,6 @@ mv {DOWNLOAD_DIR}/ffqh_10m.pt ./models/
 ```
 {DOWNLOAD_DIR} is the directory that you downloaded checkpoint to.
 
-<br />
-
 
 ### 2) Set environment
 ### [Option 1] Local environment setting
