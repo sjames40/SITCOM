@@ -1,5 +1,5 @@
 # SITCOM: Step-wise Triple-Consistent Diffusion Sampling for Inverse Problems
-
+#### 📢 📢 New Update (March 2026): Added LDCT image restoration demo using SITCOM, you can find the details in ```4) Instruction for ldct_sitcom.ipynb (NEW OPTION)```, including a notebook and preprocessing script for the AAPM 2016 dataset. Download from [The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/collection/ldct-and-projection-data/).
 ## ICML 2025
 
 **Authors**: Ismail R. Alkhouri*, Shijun Liang*, Cheng-Han Huang, Jimmy Dai, Qing Qu, Saiprasad Ravishankar, and Rongrong Wang.
@@ -96,13 +96,20 @@ python3 SITCOM_with_noise.py\
 The threshold may vary depending on the task; for instance, in super-resolution, it is set to 20, whereas for phase retrieval, it is 80, other image task is 50. as it depends on the image size. For imagenet, use configs/imagenet_model_config.yaml.
 
 
-### 4) Preparation for ldct_sitcom.ipynb
+### 4) Instruction for ldct_sitcom.ipynb (NEW OPTION)
 
+- **Data Preparation:**
+  - Run `preprocess_aapm_ndct.py` to prepare the ndct PNG data
 - **Data Directory:**
-  - `SITCOM/data/ldct_demo/ndct` (Required, place clean/full-dose here)
-  - `SITCOM/data/ldct_demo/ldct` (Optional, place paired low-dose here)
+  - `SITCOM/data/ldct_demo/ndct` (Required, place clean/full-dose)
+  - `SITCOM/data/ldct_demo/ldct` (Optional, place paired low-dose)
 - **Model Weights:**
-  - `SITCOM/models/ffhq_10m.pt`
+  - `SITCOM/models/ffhq_10m.pt` (Place the pre-trained model here)
+- **Run the Notebook:**
+  - Run the notebook to generate your own results. Example outputs are shown directly in the notebook for reference.
+  - Notes:
+    - Simulated LDCT is generated stochastically (Poisson + Gaussian noise).  
+    - The FFHQ pretrained checkpoint is used for demonstration only. A CT-domain checkpoint is recommended for clinical-quality results.
 
 ## Possible task configurations
 
