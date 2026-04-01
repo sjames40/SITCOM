@@ -38,7 +38,7 @@ we will refer to the other director on [SITCOM-ODE](https://github.com/sjames40/
 From the [link](https://drive.google.com/drive/folders/1jElnRoFv7b31fG0v6pTSQkelbSX3xGZh?usp=sharing), download the checkpoint "ffhq_10m.pt" and paste it to ./models/
 ```
 mkdir models
-mv {DOWNLOAD_DIR}/ffqh_10m.pt ./models/
+mv {DOWNLOAD_DIR}/ffhq_10m.pt ./models/
 ```
 **{DOWNLOAD_DIR} is the directory that you downloaded checkpoint to.**
 
