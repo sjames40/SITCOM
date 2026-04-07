@@ -1,6 +1,6 @@
 # SITCOM: Step-wise Triple-Consistent Diffusion Sampling for Inverse Problems
 ## 📢 News & Updates
-* **[April 2026]** 🔥 Added a new demo notebook [`Demo-for-sr-inpainting.ipynb`](./Demo-for-sr-inpainting.ipynb) for Super-Resolution (SR) and Inpainting visualization! We've also updated `SITCOM_with_noise.py` and `inpainting_config.yaml` to fully support this demo.
+* **[April 2026]** 🔥 Added a new demo notebook [`Demo-for-sr-inpainting.ipynb`](./Demo-for-sr-inpainting.ipynb) for Super-Resolution (SR) and Inpainting visualization. We've also updated `SITCOM_with_noise.py` and `inpainting_config.yaml`(in configs folder) to fully support this demo.
 
 ## ICML 2025
 
