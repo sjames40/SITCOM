@@ -1,0 +1,22 @@
+conditioning:
+  method: ps
+  params:
+    scale: 0.5
+
+data:
+  name: ffhq
+  root: /egr/research-slim/hy2786/SITCOM/data/demo/
+
+measurement:
+  operator:
+    name: inpainting         
+
+  mask_opt:
+    mask_type: box                                   
+    mask_len_range: !!python/tuple [128, 129]        
+    # mask_prob_range: !!python/tuple [0.3, 0.7]    
+    image_size: 256  
+
+  noise:
+    name: gaussian
+    sigma: 0.01
