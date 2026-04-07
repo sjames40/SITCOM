@@ -1,5 +1,7 @@
 # SITCOM: Step-wise Triple-Consistent Diffusion Sampling for Inverse Problems
-#### 📢 📢 New Update (March 2026): Added LDCT image restoration demo using SITCOM, you can find the details in ```4) Instruction for ldct_sitcom.ipynb (NEW OPTION)```, including a notebook and preprocessing script for the AAPM 2016 dataset. Download from [The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/collection/ldct-and-projection-data/).
+## 📢 News & Updates
+* **[April 2026]** 🔥 Added a new demo notebook [`Demo-for-sr-inpainting.ipynb`](./Demo-for-sr-inpainting.ipynb) for Super-Resolution (SR) and Inpainting visualization! We've also updated `SITCOM_with_noise.py` and `inpainting_config.yaml` to fully support this demo.
+
 ## ICML 2025
 
 **Authors**: Ismail R. Alkhouri*, Shijun Liang*, Cheng-Han Huang, Jimmy Dai, Qing Qu, Saiprasad Ravishankar, and Rongrong Wang.
